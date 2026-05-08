@@ -160,6 +160,8 @@ ScreenManager:
                 BoxLayout:
                     orientation: "vertical"
                     padding: "12dp"
+                    spacing: "8dp"
+
                     ScrollView:
                         BoxLayout:
                             orientation: "vertical"
@@ -167,43 +169,98 @@ ScreenManager:
                             height: self.minimum_height
                             spacing: "8dp"
 
+                            MDLabel:
+                                text: "💊 Medical Conditions & Meds"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+
                             MDTextField:
                                 id: health_conditions
                                 hint_text: "Conditions (comma separated)"
-                                helper_text: "e.g. Diabetes, Thyroid"
+                                helper_text: "e.g. Diabetes, Thyroid, Hypertension"
                                 helper_text_mode: "on_focus"
                                 mode: "rectangle"
 
+                            MDLabel:
+                                text: "Medicine 1"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
                             MDTextField:
                                 id: med1_name
-                                hint_text: "Medicine 1 - Name"
+                                hint_text: "Medicine Name"
                                 mode: "rectangle"
                             MDTextField:
                                 id: med1_dose
-                                hint_text: "Medicine 1 - Dose"
+                                hint_text: "Dose"
                                 mode: "rectangle"
                             MDTextField:
                                 id: med1_time
-                                hint_text: "Medicine 1 - Time"
+                                hint_text: "Time (Morning/Night/Both)"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: med1_days
+                                hint_text: "Days (e.g. M,T,W,Th,F,S,Su or Daily)"
                                 mode: "rectangle"
 
+                            MDLabel:
+                                text: "Medicine 2"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
                             MDTextField:
                                 id: med2_name
-                                hint_text: "Medicine 2 - Name"
+                                hint_text: "Medicine Name"
                                 mode: "rectangle"
                             MDTextField:
                                 id: med2_dose
-                                hint_text: "Medicine 2 - Dose"
+                                hint_text: "Dose"
                                 mode: "rectangle"
                             MDTextField:
                                 id: med2_time
-                                hint_text: "Medicine 2 - Time"
+                                hint_text: "Time (Morning/Night/Both)"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: med2_days
+                                hint_text: "Days (e.g. M,T,W,Th,F,S,Su or Daily)"
+                                mode: "rectangle"
+
+                            MDLabel:
+                                text: "Medicine 3"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                            MDTextField:
+                                id: med3_name
+                                hint_text: "Medicine Name"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: med3_dose
+                                hint_text: "Dose"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: med3_time
+                                hint_text: "Time (Morning/Night/Both)"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: med3_days
+                                hint_text: "Days (e.g. M,T,W,Th,F,S,Su or Daily)"
                                 mode: "rectangle"
 
                             MDRaisedButton:
-                                text: "Save Health"
+                                text: "💾 Save Health"
                                 pos_hint: {"center_x": 0.5}
                                 size_hint_x: 0.9
+                                md_bg_color: 0.106, 0.498, 0.290, 1
                                 on_release: root.save_health()
 
             Tab:
@@ -218,38 +275,113 @@ ScreenManager:
                             height: self.minimum_height
                             spacing: "8dp"
 
+                            MDLabel:
+                                text: "Appliance 1"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
                             MDTextField:
                                 id: app1_name
-                                hint_text: "Appliance 1 - Name"
+                                hint_text: "Name"
+                                text: "RO Water Purifier"
                                 mode: "rectangle"
                             MDTextField:
                                 id: app1_vendor
-                                hint_text: "Appliance 1 - Vendor/Phone"
+                                hint_text: "Service Partner (Name/Phone)"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: app1_last_service
+                                hint_text: "Last Service Date (e.g. 2024-01-15)"
                                 mode: "rectangle"
                             MDTextField:
                                 id: app1_status
-                                hint_text: "Appliance 1 - Status"
+                                hint_text: "Status (Healthy/Needs Service/Broken)"
                                 text: "Healthy"
                                 mode: "rectangle"
 
+                            MDLabel:
+                                text: "Appliance 2"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
                             MDTextField:
                                 id: app2_name
-                                hint_text: "Appliance 2 - Name"
+                                hint_text: "Name"
+                                text: "Inverter/UPS"
                                 mode: "rectangle"
                             MDTextField:
                                 id: app2_vendor
-                                hint_text: "Appliance 2 - Vendor/Phone"
+                                hint_text: "Service Partner (Name/Phone)"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: app2_last_service
+                                hint_text: "Last Service Date (e.g. 2024-01-15)"
                                 mode: "rectangle"
                             MDTextField:
                                 id: app2_status
-                                hint_text: "Appliance 2 - Status"
+                                hint_text: "Status (Healthy/Needs Service/Broken)"
+                                text: "Healthy"
+                                mode: "rectangle"
+
+                            MDLabel:
+                                text: "Appliance 3"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                            MDTextField:
+                                id: app3_name
+                                hint_text: "Name"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: app3_vendor
+                                hint_text: "Service Partner (Name/Phone)"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: app3_last_service
+                                hint_text: "Last Service Date (e.g. 2024-01-15)"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: app3_status
+                                hint_text: "Status (Healthy/Needs Service/Broken)"
+                                text: "Healthy"
+                                mode: "rectangle"
+
+                            MDLabel:
+                                text: "Appliance 4"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                            MDTextField:
+                                id: app4_name
+                                hint_text: "Name"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: app4_vendor
+                                hint_text: "Service Partner (Name/Phone)"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: app4_last_service
+                                hint_text: "Last Service Date (e.g. 2024-01-15)"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: app4_status
+                                hint_text: "Status (Healthy/Needs Service/Broken)"
                                 text: "Healthy"
                                 mode: "rectangle"
 
                             MDRaisedButton:
-                                text: "Save Home"
+                                text: "💾 Save Home"
                                 pos_hint: {"center_x": 0.5}
                                 size_hint_x: 0.9
+                                md_bg_color: 0.106, 0.498, 0.290, 1
                                 on_release: root.save_home()
 
             Tab:
@@ -257,44 +389,29 @@ ScreenManager:
                 BoxLayout:
                     orientation: "vertical"
                     padding: "12dp"
+                    spacing: "8dp"
+
                     ScrollView:
                         BoxLayout:
+                            id: social_container
                             orientation: "vertical"
                             size_hint_y: None
                             height: self.minimum_height
                             spacing: "8dp"
 
-                            MDTextField:
-                                id: social1_name
-                                hint_text: "Activity 1 - Name"
-                                mode: "rectangle"
-                            MDTextField:
-                                id: social1_freq
-                                hint_text: "Activity 1 - Frequency"
-                                mode: "rectangle"
-                            MDTextField:
-                                id: social1_desc
-                                hint_text: "Activity 1 - Description"
-                                mode: "rectangle"
+                    MDRaisedButton:
+                        text: "➕ Add Activity"
+                        pos_hint: {"center_x": 0.5}
+                        size_hint_x: 0.9
+                        md_bg_color: 0.125, 0.729, 0.361, 1
+                        on_release: root.add_social_activity()
 
-                            MDTextField:
-                                id: social2_name
-                                hint_text: "Activity 2 - Name"
-                                mode: "rectangle"
-                            MDTextField:
-                                id: social2_freq
-                                hint_text: "Activity 2 - Frequency"
-                                mode: "rectangle"
-                            MDTextField:
-                                id: social2_desc
-                                hint_text: "Activity 2 - Description"
-                                mode: "rectangle"
-
-                            MDRaisedButton:
-                                text: "Save Social"
-                                pos_hint: {"center_x": 0.5}
-                                size_hint_x: 0.9
-                                on_release: root.save_social()
+                    MDRaisedButton:
+                        text: "💾 Save Social"
+                        pos_hint: {"center_x": 0.5}
+                        size_hint_x: 0.9
+                        md_bg_color: 0.106, 0.498, 0.290, 1
+                        on_release: root.save_social()
 
             Tab:
                 title: "Emergency"
@@ -308,9 +425,17 @@ ScreenManager:
                             height: self.minimum_height
                             spacing: "8dp"
 
+                            MDLabel:
+                                text: "🏥 Medical"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
                             MDTextField:
                                 id: em_hospital
                                 hint_text: "Hospital"
+                                text: "Fortis Memorial, Gurgaon"
                                 mode: "rectangle"
                             MDTextField:
                                 id: em_er_phone
@@ -321,16 +446,56 @@ ScreenManager:
                                 hint_text: "Doctor"
                                 mode: "rectangle"
                             MDTextField:
+                                id: em_dr_phone
+                                hint_text: "Dr. Phone"
+                                mode: "rectangle"
+
+                            MDLabel:
+                                text: "👨‍👩‍👧‍👦 Family"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                            MDTextField:
                                 id: em_primary
-                                hint_text: "Primary Contact"
+                                hint_text: "Primary Contact (Son/Daughter)"
                                 mode: "rectangle"
                             MDTextField:
                                 id: em_relative
                                 hint_text: "Nearby Relative"
                                 mode: "rectangle"
+
+                            MDLabel:
+                                text: "🏢 Society & RWA"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
                             MDTextField:
                                 id: em_security
                                 hint_text: "Security Desk"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: em_rwa
+                                hint_text: "RWA Emergency"
+                                mode: "rectangle"
+                            MDTextField:
+                                id: em_maintenance
+                                hint_text: "Maintenance"
+                                mode: "rectangle"
+
+                            MDLabel:
+                                text: "👮 Local Services"
+                                font_style: "H6"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.369, 0.125, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                            MDTextField:
+                                id: em_police
+                                hint_text: "Police Station"
                                 mode: "rectangle"
                             MDTextField:
                                 id: em_ambulance
@@ -339,9 +504,10 @@ ScreenManager:
                                 mode: "rectangle"
 
                             MDRaisedButton:
-                                text: "Save Emergency"
+                                text: "💾 Save Emergency"
                                 pos_hint: {"center_x": 0.5}
                                 size_hint_x: 0.9
+                                md_bg_color: 0.106, 0.498, 0.290, 1
                                 on_release: root.save_emergency()
 
 <DirectoryScreen>:
@@ -416,6 +582,132 @@ ScreenManager:
                     size_hint_y: None
                     height: self.texture_size[1]
 
+            Tab:
+                title: "Manager"
+                BoxLayout:
+                    orientation: "vertical"
+                    padding: "20dp"
+                    spacing: "16dp"
+                    canvas.before:
+                        Color:
+                            rgba: 0.941, 0.976, 0.957, 1
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+
+                    MDLabel:
+                        text: "Manager Oversight"
+                        font_style: "H5"
+                        theme_text_color: "Custom"
+                        text_color: 0.106, 0.369, 0.125, 1
+                        size_hint_y: None
+                        height: self.texture_size[1]
+
+                    MDCard:
+                        size_hint_y: None
+                        height: "80dp"
+                        padding: "16dp"
+                        md_bg_color: 1, 1, 1, 1
+                        radius: [10]
+                        BoxLayout:
+                            orientation: "vertical"
+                            MDLabel:
+                                text: "Medication Adherence"
+                                theme_text_color: "Custom"
+                                text_color: 0.4, 0.4, 0.4, 1
+                                font_style: "Caption"
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                            MDLabel:
+                                id: metric_adherence
+                                text: "100%"
+                                font_style: "H4"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.498, 0.290, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+
+                    MDCard:
+                        size_hint_y: None
+                        height: "80dp"
+                        padding: "16dp"
+                        md_bg_color: 1, 1, 1, 1
+                        radius: [10]
+                        BoxLayout:
+                            orientation: "vertical"
+                            MDLabel:
+                                text: "Critical Tasks"
+                                theme_text_color: "Custom"
+                                text_color: 0.4, 0.4, 0.4, 1
+                                font_style: "Caption"
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                            MDLabel:
+                                id: metric_tasks
+                                text: "0 Pending"
+                                font_style: "H4"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.498, 0.290, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+
+                    MDCard:
+                        size_hint_y: None
+                        height: "80dp"
+                        padding: "16dp"
+                        md_bg_color: 1, 1, 1, 1
+                        radius: [10]
+                        BoxLayout:
+                            orientation: "vertical"
+                            MDLabel:
+                                text: "Next Visit"
+                                theme_text_color: "Custom"
+                                text_color: 0.4, 0.4, 0.4, 1
+                                font_style: "Caption"
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                            MDLabel:
+                                id: metric_visit
+                                text: "In 4 Days"
+                                font_style: "H4"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.498, 0.290, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+
+                    MDCard:
+                        size_hint_y: None
+                        height: "80dp"
+                        padding: "16dp"
+                        md_bg_color: 1, 1, 1, 1
+                        radius: [10]
+                        BoxLayout:
+                            orientation: "vertical"
+                            MDLabel:
+                                text: "Profile Complete"
+                                theme_text_color: "Custom"
+                                text_color: 0.4, 0.4, 0.4, 1
+                                font_style: "Caption"
+                                size_hint_y: None
+                                height: self.texture_size[1]
+                            MDLabel:
+                                id: metric_profile
+                                text: "Checking..."
+                                font_style: "H4"
+                                theme_text_color: "Custom"
+                                text_color: 0.106, 0.498, 0.290, 1
+                                size_hint_y: None
+                                height: self.texture_size[1]
+
+                    MDRaisedButton:
+                        text: "🔄 Refresh"
+                        pos_hint: {"center_x": 0.5}
+                        size_hint_x: 0.9
+                        md_bg_color: 0.106, 0.498, 0.290, 1
+                        on_release: root.refresh_manager()
+
+                    Widget:
+
 <Tab>:
 '''
 
@@ -454,53 +746,135 @@ class OnboardScreen(Screen):
 
 class DashboardScreen(Screen):
     header_text = StringProperty("Dashboard")
+    _social_count = 0
 
+    def on_enter(self):
+        if self._social_count == 0:
+            self.add_social_activity()
+
+    def add_social_activity(self):
+        self._social_count += 1
+        i = self._social_count
+        container = self.ids.social_container
+
+        from kivy.uix.boxlayout import BoxLayout
+        from kivymd.uix.label import MDLabel
+        from kivymd.uix.textfield import MDTextField
+
+        box = BoxLayout(orientation="vertical", size_hint_y=None, spacing=4, padding=[0, 4])
+        box.bind(minimum_height=box.setter("height"))
+
+        lbl = MDLabel(text=f"Activity {i}", font_style="H6",
+                      theme_text_color="Custom", text_color=(0.106, 0.369, 0.125, 1),
+                      size_hint_y=None, height="32dp")
+        name_f = MDTextField(hint_text="Activity Name", mode="rectangle",
+                             size_hint_y=None, height="48dp")
+        freq_f = MDTextField(hint_text="Frequency (e.g. Every Thursday)", mode="rectangle",
+                             size_hint_y=None, height="48dp")
+        desc_f = MDTextField(hint_text="Description", mode="rectangle",
+                             size_hint_y=None, height="48dp")
+
+        name_f.id = f"social_name_{i}"
+        freq_f.id = f"social_freq_{i}"
+        desc_f.id = f"social_desc_{i}"
+
+        for w in [lbl, name_f, freq_f, desc_f]:
+            box.add_widget(w)
+
+        box._social_fields = (name_f, freq_f, desc_f)
+        container.add_widget(box)
     def save_health(self):
         app = MDApp.get_running_app()
         conditions = [c.strip() for c in self.ids.health_conditions.text.split(",") if c.strip()]
         meds = []
-        if self.ids.med1_name.text:
-            meds.append({"Medicine": self.ids.med1_name.text, "Dose": self.ids.med1_dose.text, "Time": self.ids.med1_time.text})
-        if self.ids.med2_name.text:
-            meds.append({"Medicine": self.ids.med2_name.text, "Dose": self.ids.med2_dose.text, "Time": self.ids.med2_time.text})
+        for i in range(1, 4):
+            name = self.ids[f"med{i}_name"].text
+            if name:
+                meds.append({
+                    "Medicine": name,
+                    "Dose": self.ids[f"med{i}_dose"].text,
+                    "Time": self.ids[f"med{i}_time"].text,
+                    "Days": self.ids[f"med{i}_days"].text,
+                })
         try:
             get_collection().update_one({"name": app.customer_name}, {"$set": {"health": {"conditions": conditions, "medications": meds}}}, upsert=True)
+            from kivymd.toast import toast
+            toast("Health data saved!")
         except Exception as e:
             print(f"Error: {e}")
 
     def save_home(self):
         app = MDApp.get_running_app()
         appliances = []
-        if self.ids.app1_name.text:
-            appliances.append({"name": self.ids.app1_name.text, "vendor": self.ids.app1_vendor.text, "status": self.ids.app1_status.text})
-        if self.ids.app2_name.text:
-            appliances.append({"name": self.ids.app2_name.text, "vendor": self.ids.app2_vendor.text, "status": self.ids.app2_status.text})
+        for i in range(1, 5):
+            name = self.ids[f"app{i}_name"].text
+            if name:
+                appliances.append({
+                    "name": name,
+                    "vendor": self.ids[f"app{i}_vendor"].text,
+                    "last_service": self.ids[f"app{i}_last_service"].text,
+                    "status": self.ids[f"app{i}_status"].text,
+                })
         try:
             get_collection().update_one({"name": app.customer_name}, {"$set": {"home": {"appliances": appliances}}}, upsert=True)
+            from kivymd.toast import toast
+            toast("Home data saved!")
         except Exception as e:
             print(f"Error: {e}")
 
     def save_social(self):
         app = MDApp.get_running_app()
         activities = []
-        if self.ids.social1_name.text:
-            activities.append({"name": self.ids.social1_name.text, "frequency": self.ids.social1_freq.text, "description": self.ids.social1_desc.text})
-        if self.ids.social2_name.text:
-            activities.append({"name": self.ids.social2_name.text, "frequency": self.ids.social2_freq.text, "description": self.ids.social2_desc.text})
+        for box in self.ids.social_container.children[::-1]:
+            if hasattr(box, "_social_fields"):
+                name_f, freq_f, desc_f = box._social_fields
+                if name_f.text.strip():
+                    activities.append({
+                        "name": name_f.text,
+                        "frequency": freq_f.text,
+                        "description": desc_f.text,
+                    })
         try:
             get_collection().update_one({"name": app.customer_name}, {"$set": {"social": {"activities": activities}}}, upsert=True)
+            from kivymd.toast import toast
+            toast("Social data saved!")
         except Exception as e:
             print(f"Error: {e}")
 
-    def save_emergency(self):
+    def refresh_manager(self):
+        app = MDApp.get_running_app()
+        try:
+            doc = get_collection().find_one({"name": app.customer_name}, {"_id": 0})
+            if not doc:
+                return
+            sections = ["health", "home", "social", "emergency"]
+            filled = sum(1 for s in sections if doc.get(s))
+            self.ids.metric_profile.text = f"{filled}/{len(sections)} Sections"
+            meds = doc.get("health", {}).get("medications", [])
+            self.ids.metric_adherence.text = "100%" if meds else "No Meds"
+            self.ids.metric_tasks.text = "0 Pending"
+            self.ids.metric_visit.text = "In 4 Days"
+        except Exception as e:
+            print(f"Error: {e}")
+
+
         app = MDApp.get_running_app()
         try:
             get_collection().update_one({"name": app.customer_name}, {"$set": {"emergency": {
-                "hospital": self.ids.em_hospital.text, "er_phone": self.ids.em_er_phone.text,
-                "doctor": self.ids.em_doctor.text, "primary_contact": self.ids.em_primary.text,
-                "nearby_relative": self.ids.em_relative.text, "security_desk": self.ids.em_security.text,
+                "hospital": self.ids.em_hospital.text,
+                "er_phone": self.ids.em_er_phone.text,
+                "doctor": self.ids.em_doctor.text,
+                "dr_phone": self.ids.em_dr_phone.text,
+                "primary_contact": self.ids.em_primary.text,
+                "nearby_relative": self.ids.em_relative.text,
+                "security_desk": self.ids.em_security.text,
+                "rwa_emergency": self.ids.em_rwa.text,
+                "maintenance": self.ids.em_maintenance.text,
+                "police_station": self.ids.em_police.text,
                 "ambulance": self.ids.em_ambulance.text,
             }}}, upsert=True)
+            from kivymd.toast import toast
+            toast("Emergency data saved!")
         except Exception as e:
             print(f"Error: {e}")
 

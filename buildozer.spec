@@ -5,7 +5,7 @@ package.domain = org.elda
 source.dir = .
 source.include_exts = py,png,jpg,kv,atlas
 source.exclude_dirs = bin,.buildozer,.github,__pycache__
-source.exclude_patterns = build_apk.sh,Dockerfile,README.md,onboard.py
+source.exclude_patterns = build_apk.sh,Dockerfile,README.md
 version = 1.0.0
 
 requirements = python3,kivy==2.3.0,kivymd==1.2.0,pymongo,dnspython,pillow,certifi,requests,urllib3,charset-normalizer,idna

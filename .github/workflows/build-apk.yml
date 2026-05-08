@@ -30,14 +30,8 @@ jobs:
       - name: Install buildozer
         run: pip install buildozer cython
 
-      - name: Prepare onboard app as main
-        run: |
-          cp main.py directory.py
-          cp onboard.py main.py
-
       - name: Build APK
-        run: |
-          echo "y" | buildozer android debug
+        run: yes | buildozer android debug
         timeout-minutes: 60
 
       - name: Upload APK

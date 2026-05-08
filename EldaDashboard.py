@@ -582,8 +582,45 @@ ScreenManager:
                     size_hint_y: None
                     height: self.texture_size[1]
 
-            Tab:
-                title: "Manager"
+<Tab>:
+'''
+
+
+class Tab(BoxLayout, MDTabsBase):
+    pass
+
+
+class HomeScreen(Screen):
+    pass
+
+
+class OnboardScreen(Screen):
+    def launch_dashboard(self):
+        app = MDApp.get_running_app()
+        app.customer_name = self.ids.onboard_name.text
+        app.customer_age = self.ids.onboard_age.text
+        app.customer_mobile = self.ids.onboard_mobile.text
+        app.customer_location = self.ids.onboard_location.text
+
+        try:
+            collection = get_collection()
+            collection.update_one(
+                {"name": app.customer_name},
+                {"$set": {"name": app.customer_name, "age": app.customer_age,
+                          "mobile": app.customer_mobile, "location": app.customer_location}},
+                upsert=True
+            )
+        except Exception as e:
+            print(f"Error: {e}")
+
+        dashboard = self.manager.get_screen("dashboard")
+        dashboard.header_text = f"{app.customer_name} ({app.customer_age})"
+        self.manager.current = "dashboard"
+
+
+class DashboardScreen_PLACEHOLDER:
+    pass
+
                 BoxLayout:
                     orientation: "vertical"
                     padding: "20dp"

@@ -7,6 +7,55 @@ from kivymd.uix.tab import MDTabsBase
 from kivy.uix.boxlayout import BoxLayout
 from pymongo import MongoClient
 import os
+import re
+
+# ISD codes with country and expected phone length
+ISD_CODES = [
+    ("+91", "India", 10),
+    ("+1", "US/Canada", 10),
+    ("+44", "UK", 10),
+    ("+61", "Australia", 9),
+    ("+971", "UAE", 9),
+    ("+65", "Singapore", 8),
+]
+
+ISD_DISPLAY = [f"{code} ({country})" for code, country, _ in ISD_CODES]
+
+
+def validate_phone(phone_text, isd_index=0):
+    """Validate phone number length based on selected ISD code."""
+    digits = re.sub(r'\D', '', phone_text)
+    expected_len = ISD_CODES[isd_index][2]
+    if not digits:
+        return False, "Phone number is required"
+    if len(digits) != expected_len:
+        return False, f"Phone must be {expected_len} digits for {ISD_CODES[isd_index][1]}"
+    return True, ""
+
+
+def validate_name(text):
+    if not text.strip():
+        return False, "Name is required"
+    if not re.match(r'^[a-zA-Z\s\.]+$', text.strip()):
+        return False, "Name must contain only letters, spaces, or dots"
+    return True, ""
+
+
+def validate_age(text):
+    if not text.strip():
+        return False, "Age is required"
+    if not text.strip().isdigit():
+        return False, "Age must be a number"
+    age = int(text.strip())
+    if age < 1 or age > 120:
+        return False, "Age must be between 1 and 120"
+    return True, ""
+
+
+def validate_required(text, field_name):
+    if not text.strip():
+        return False, f"{field_name} is required"
+    return True, ""
 
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb+srv://<db_username>:<db_password>@elda.wzcx5kq.mongodb.net/?appName=Elda")
 
@@ -57,16 +106,40 @@ ScreenManager:
                     hint_text: "Age"
                     text: "62"
                     mode: "rectangle"
-                MDTextField:
-                    id: onboard_mobile
-                    hint_text: "Mobile"
-                    text: "9909987899"
-                    mode: "rectangle"
+                BoxLayout:
+                    orientation: "horizontal"
+                    size_hint_y: None
+                    height: "48dp"
+                    spacing: "8dp"
+
+                    Spinner:
+                        id: isd_picker
+                        text: "+91 (India)"
+                        values: app.isd_values
+                        size_hint_x: 0.4
+                        background_color: 0.106, 0.369, 0.125, 1
+                        color: 1, 1, 1, 1
+
+                    MDTextField:
+                        id: onboard_mobile
+                        hint_text: "Mobile (digits only)"
+                        text: "9909987899"
+                        mode: "rectangle"
+                        input_filter: "int"
+                        max_text_length: 10
                 MDTextField:
                     id: onboard_location
                     hint_text: "Society/Apartment"
                     text: "Gurgaon"
                     mode: "rectangle"
+
+                MDLabel:
+                    id: onboard_error
+                    text: ""
+                    theme_text_color: "Error"
+                    size_hint_y: None
+                    height: self.texture_size[1] if self.text else 0
+                    padding: [0, 4]
 
                 MDRaisedButton:
                     text: "🚀 Launch Dashboard"
@@ -321,6 +394,8 @@ ScreenManager:
                                 id: em_er_phone
                                 hint_text: "ER Phone"
                                 mode: "rectangle"
+                                input_filter: "int"
+                                max_text_length: 10
                             MDTextField:
                                 id: em_doctor
                                 hint_text: "Doctor"
@@ -329,6 +404,8 @@ ScreenManager:
                                 id: em_dr_phone
                                 hint_text: "Dr. Phone"
                                 mode: "rectangle"
+                                input_filter: "int"
+                                max_text_length: 10
                             MDTextField:
                                 id: em_primary
                                 hint_text: "Primary Contact (Son/Daughter)"
@@ -370,12 +447,44 @@ class Tab(BoxLayout, MDTabsBase):
 
 
 class OnboardScreen(Screen):
+    def get_isd_index(self):
+        picker_text = self.ids.isd_picker.text
+        for i, display in enumerate(ISD_DISPLAY):
+            if display == picker_text:
+                return i
+        return 0
+
     def launch_dashboard(self):
+        # Validate all fields
+        errors = []
+        valid, msg = validate_name(self.ids.onboard_name.text)
+        if not valid:
+            errors.append(msg)
+
+        valid, msg = validate_age(self.ids.onboard_age.text)
+        if not valid:
+            errors.append(msg)
+
+        isd_idx = self.get_isd_index()
+        valid, msg = validate_phone(self.ids.onboard_mobile.text, isd_idx)
+        if not valid:
+            errors.append(msg)
+
+        valid, msg = validate_required(self.ids.onboard_location.text, "Location")
+        if not valid:
+            errors.append(msg)
+
+        if errors:
+            self.ids.onboard_error.text = "\n".join(errors)
+            return
+
+        self.ids.onboard_error.text = ""
         app = MDApp.get_running_app()
-        app.customer_name = self.ids.onboard_name.text
-        app.customer_age = self.ids.onboard_age.text
-        app.customer_mobile = self.ids.onboard_mobile.text
-        app.customer_location = self.ids.onboard_location.text
+        isd_code = ISD_CODES[isd_idx][0]
+        app.customer_name = self.ids.onboard_name.text.strip()
+        app.customer_age = self.ids.onboard_age.text.strip()
+        app.customer_mobile = f"{isd_code}{self.ids.onboard_mobile.text.strip()}"
+        app.customer_location = self.ids.onboard_location.text.strip()
 
         # Save to MongoDB
         try:
@@ -406,23 +515,43 @@ class DashboardScreen(Screen):
         pass
 
     def save_health(self):
+        from kivymd.toast import toast
         app = MDApp.get_running_app()
+
+        # Validate: at least one condition or one medicine required
         conditions = [c.strip() for c in self.ids.health_conditions.text.split(",") if c.strip()]
+        has_med1 = bool(self.ids.med1_name.text.strip())
+        has_med2 = bool(self.ids.med2_name.text.strip())
+
+        if not conditions and not has_med1 and not has_med2:
+            toast("Enter at least one condition or medicine")
+            return
+
+        # Validate medicine fields are complete if partially filled
+        for prefix, label in [("med1", "Medicine 1"), ("med2", "Medicine 2")]:
+            name = self.ids[f"{prefix}_name"].text.strip()
+            if name:
+                if not self.ids[f"{prefix}_dose"].text.strip():
+                    toast(f"{label}: Dose is required")
+                    return
+                if not self.ids[f"{prefix}_time"].text.strip():
+                    toast(f"{label}: Time is required")
+                    return
 
         medications = []
-        if self.ids.med1_name.text:
+        if has_med1:
             medications.append({
-                "Medicine": self.ids.med1_name.text,
-                "Dose": self.ids.med1_dose.text,
-                "Time": self.ids.med1_time.text,
-                "Days": self.ids.med1_days.text,
+                "Medicine": self.ids.med1_name.text.strip(),
+                "Dose": self.ids.med1_dose.text.strip(),
+                "Time": self.ids.med1_time.text.strip(),
+                "Days": self.ids.med1_days.text.strip(),
             })
-        if self.ids.med2_name.text:
+        if has_med2:
             medications.append({
-                "Medicine": self.ids.med2_name.text,
-                "Dose": self.ids.med2_dose.text,
-                "Time": self.ids.med2_time.text,
-                "Days": self.ids.med2_days.text,
+                "Medicine": self.ids.med2_name.text.strip(),
+                "Dose": self.ids.med2_dose.text.strip(),
+                "Time": self.ids.med2_time.text.strip(),
+                "Days": self.ids.med2_days.text.strip(),
             })
 
         try:
@@ -432,26 +561,32 @@ class DashboardScreen(Screen):
                 {"$set": {"health": {"conditions": conditions, "medications": medications}}},
                 upsert=True
             )
-            from kivymd.toast import toast
             toast("Health data saved!")
         except Exception as e:
             print(f"Save error: {e}")
 
     def save_home(self):
+        from kivymd.toast import toast
         app = MDApp.get_running_app()
+
+        VALID_STATUSES = ["healthy", "needs service", "broken"]
         appliances = []
-        if self.ids.app1_name.text:
-            appliances.append({
-                "name": self.ids.app1_name.text,
-                "vendor": self.ids.app1_vendor.text,
-                "status": self.ids.app1_status.text,
-            })
-        if self.ids.app2_name.text:
-            appliances.append({
-                "name": self.ids.app2_name.text,
-                "vendor": self.ids.app2_vendor.text,
-                "status": self.ids.app2_status.text,
-            })
+        for prefix, label in [("app1", "Appliance 1"), ("app2", "Appliance 2")]:
+            name = self.ids[f"{prefix}_name"].text.strip()
+            if name:
+                status = self.ids[f"{prefix}_status"].text.strip()
+                if status.lower() not in VALID_STATUSES:
+                    toast(f"{label}: Status must be Healthy/Needs Service/Broken")
+                    return
+                appliances.append({
+                    "name": name,
+                    "vendor": self.ids[f"{prefix}_vendor"].text.strip(),
+                    "status": status,
+                })
+
+        if not appliances:
+            toast("Add at least one appliance")
+            return
 
         try:
             collection = get_collection()
@@ -460,26 +595,30 @@ class DashboardScreen(Screen):
                 {"$set": {"home": {"appliances": appliances}}},
                 upsert=True
             )
-            from kivymd.toast import toast
             toast("Home data saved!")
         except Exception as e:
             print(f"Save error: {e}")
 
     def save_social(self):
+        from kivymd.toast import toast
         app = MDApp.get_running_app()
+
         activities = []
-        if self.ids.social1_name.text:
-            activities.append({
-                "name": self.ids.social1_name.text,
-                "frequency": self.ids.social1_freq.text,
-                "description": self.ids.social1_desc.text,
-            })
-        if self.ids.social2_name.text:
-            activities.append({
-                "name": self.ids.social2_name.text,
-                "frequency": self.ids.social2_freq.text,
-                "description": self.ids.social2_desc.text,
-            })
+        for prefix, label in [("social1", "Activity 1"), ("social2", "Activity 2")]:
+            name = self.ids[f"{prefix}_name"].text.strip()
+            if name:
+                if not self.ids[f"{prefix}_freq"].text.strip():
+                    toast(f"{label}: Frequency is required")
+                    return
+                activities.append({
+                    "name": name,
+                    "frequency": self.ids[f"{prefix}_freq"].text.strip(),
+                    "description": self.ids[f"{prefix}_desc"].text.strip(),
+                })
+
+        if not activities:
+            toast("Add at least one activity")
+            return
 
         try:
             collection = get_collection()
@@ -488,32 +627,54 @@ class DashboardScreen(Screen):
                 {"$set": {"social": {"activities": activities}}},
                 upsert=True
             )
-            from kivymd.toast import toast
             toast("Social data saved!")
         except Exception as e:
             print(f"Save error: {e}")
 
     def save_emergency(self):
+        from kivymd.toast import toast
         app = MDApp.get_running_app()
+
+        # Validate required fields
+        required = [
+            ("em_hospital", "Hospital"),
+            ("em_er_phone", "ER Phone"),
+            ("em_primary", "Primary Contact"),
+        ]
+        for field_id, label in required:
+            if not self.ids[field_id].text.strip():
+                toast(f"{label} is required")
+                return
+
+        # Validate phone fields (digits only, 3-15 chars for flexibility)
+        phone_fields = [
+            ("em_er_phone", "ER Phone"),
+            ("em_dr_phone", "Dr. Phone"),
+        ]
+        for field_id, label in phone_fields:
+            val = self.ids[field_id].text.strip()
+            if val and (not val.isdigit() or len(val) < 3 or len(val) > 15):
+                toast(f"{label}: Must be 3-15 digits")
+                return
+
         try:
             collection = get_collection()
             collection.update_one(
                 {"name": app.customer_name},
                 {"$set": {"emergency": {
-                    "hospital": self.ids.em_hospital.text,
-                    "er_phone": self.ids.em_er_phone.text,
-                    "doctor": self.ids.em_doctor.text,
-                    "dr_phone": self.ids.em_dr_phone.text,
-                    "primary_contact": self.ids.em_primary.text,
-                    "nearby_relative": self.ids.em_relative.text,
-                    "security_desk": self.ids.em_security.text,
-                    "rwa_emergency": self.ids.em_rwa.text,
-                    "police_station": self.ids.em_police.text,
-                    "ambulance": self.ids.em_ambulance.text,
+                    "hospital": self.ids.em_hospital.text.strip(),
+                    "er_phone": self.ids.em_er_phone.text.strip(),
+                    "doctor": self.ids.em_doctor.text.strip(),
+                    "dr_phone": self.ids.em_dr_phone.text.strip(),
+                    "primary_contact": self.ids.em_primary.text.strip(),
+                    "nearby_relative": self.ids.em_relative.text.strip(),
+                    "security_desk": self.ids.em_security.text.strip(),
+                    "rwa_emergency": self.ids.em_rwa.text.strip(),
+                    "police_station": self.ids.em_police.text.strip(),
+                    "ambulance": self.ids.em_ambulance.text.strip(),
                 }}},
                 upsert=True
             )
-            from kivymd.toast import toast
             toast("Emergency data saved!")
         except Exception as e:
             print(f"Save error: {e}")
@@ -524,6 +685,7 @@ class EldaOnboardApp(MDApp):
     customer_age = StringProperty("")
     customer_mobile = StringProperty("")
     customer_location = StringProperty("")
+    isd_values = ISD_DISPLAY
 
     def build(self):
         self.theme_cls.primary_palette = "Green"

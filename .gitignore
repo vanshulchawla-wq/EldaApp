@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 _main_backup.py
 .env
+venv/
